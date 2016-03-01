@@ -407,16 +407,18 @@ var Microformats; // jshint ignore:line
 				y = 0;
 
 			if(items){
+
+                // add v1 names
+                y = filters.length;
+                while (y--) {
+                    if(this.getMapping(filters[y])){
+                        var v1Name = this.getMapping(filters[y]).root;
+                        filters.push(v1Name);
+                    }
+                }
+
 				i = items.length;
 				while(x < i) {
-					// add v1 names
-					y = filters.length;
-					while (y--) {
-						if(this.getMapping(filters[y])){
-							var v1Name = this.getMapping(filters[y]).root;
-							filters.push(v1Name);
-						}
-					}
 					// append matching nodes into newRootNode
 					y = filters.length;
 					while (y--) {
