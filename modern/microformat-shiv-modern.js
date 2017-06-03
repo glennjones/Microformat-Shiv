@@ -1,7 +1,7 @@
 /*
    Modern
    microformat-shiv - v2.0.3
-   Built: 2017-06-03 01:06 - http://microformat-shiv.com
+   Built: 2017-06-03 04:06 - http://microformat-shiv.com
    Copyright (c) 2017 Glenn Jones
    Licensed MIT 
 */
@@ -1599,9 +1599,9 @@ var Microformats; // jshint ignore:line
 			var value;
 			if(!uf.properties.photo) {
 				value = this.getImpliedProperty(node, ['img', 'object'], this.getPhotoAttr);
-				if(value) {
+				if(value != null) {
 					// relative to absolute URL
-					if(value && value !== '' && this.options.baseUrl !== '' && value.indexOf('://') === -1) {
+					if(this.options.baseUrl !== '' && value.indexOf('://') === -1) {
 						value = modules.url.resolve(value, this.options.baseUrl);
 					}
 					uf.properties.photo = [modules.utils.trim(value)];
@@ -1629,9 +1629,9 @@ var Microformats; // jshint ignore:line
 			var value;
 			if(!uf.properties.url) {
 				value = this.getImpliedProperty(node, ['a', 'area'], this.getURLAttr);
-				if(value) {
+				if(value != null) {
 					// relative to absolute URL
-					if(value && value !== '' && this.options.baseUrl !== '' && value.indexOf('://') === -1) {
+					if(this.options.baseUrl !== '' && value.indexOf('://') === -1) {
 						value = modules.url.resolve(value, this.options.baseUrl);
 					}
 					uf.properties.url = [modules.utils.trim(value)];
@@ -1712,7 +1712,7 @@ var Microformats; // jshint ignore:line
 		 */
 		modules.Parser.prototype.getNameAttr = function(node) {
 			var value = modules.domUtils.getAttrValFromTagList(node, ['img','area'], 'alt');
-			if(!value) {
+			if(value == null) {
 				value = modules.domUtils.getAttrValFromTagList(node, ['abbr'], 'title');
 			}
 			return value;
@@ -1727,7 +1727,7 @@ var Microformats; // jshint ignore:line
 		 */
 		modules.Parser.prototype.getPhotoAttr = function(node) {
 			var value = modules.domUtils.getAttrValFromTagList(node, ['img'], 'src');
-			if(!value && modules.domUtils.hasAttributeValue(node, 'class', 'include') === false) {
+			if(value == null && modules.domUtils.hasAttributeValue(node, 'class', 'include') === false) {
 				value = modules.domUtils.getAttrValFromTagList(node, ['object'], 'data');
 			}
 			return value;
@@ -1745,7 +1745,7 @@ var Microformats; // jshint ignore:line
 			if(modules.domUtils.hasAttributeValue(node, 'class', 'include') === false){
 
 				value = modules.domUtils.getAttrValFromTagList(node, ['a'], 'href');
-				if(!value) {
+				if(value==null) {
 					value = modules.domUtils.getAttrValFromTagList(node, ['area'], 'href');
 				}
 
@@ -2742,10 +2742,8 @@ var Microformats; // jshint ignore:line
 
 			while(i--) {
 				if(node.tagName.toLowerCase() === tagNames[i]) {
-					var attrValue = this.getAttribute(node, attributeName);
-					if(attrValue && attrValue !== '') {
-						return attrValue;
-					}
+					if (this.hasAttribute(node, attributeName))
+						return this.getAttribute(node, attributeName);
 				}
 			}
 			return null;
