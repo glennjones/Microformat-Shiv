@@ -1,8 +1,8 @@
 /*
    Modern
-   microformat-shiv - v2.0.2
-   Built: 2016-10-26 10:10 - http://microformat-shiv.com
-   Copyright (c) 2016 Glenn Jones
+   microformat-shiv - v2.0.3
+   Built: 2017-06-03 01:06 - http://microformat-shiv.com
+   Copyright (c) 2017 Glenn Jones
    Licensed MIT 
 */
 
@@ -22,7 +22,7 @@ var Microformats; // jshint ignore:line
     var modules = {};
     
 
-	modules.version = '2.0.2';
+	modules.version = '2.0.3';
 	modules.livingStandard = '2016-05-25T09:22:18Z';
 
 	/**
@@ -824,36 +824,35 @@ var Microformats; // jshint ignore:line
 		 * @return {String}
 		 */
 		getPValue: function(node, valueParse) {
-			var out = '';
+			var out = null;
 			if(valueParse) {
 				out = this.getValueClass(node, 'p');
 			}
-
-			if(!out && valueParse) {
+			if(out == null && valueParse) {
 				out = this.getValueTitle(node);
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.domUtils.getAttrValFromTagList(node, ['abbr'], 'title');
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.domUtils.getAttrValFromTagList(node, ['data','input'], 'value');
 			}
 
 			if(node.name === 'br' || node.name === 'hr') {
-				out = '';
+				out = null;
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.domUtils.getAttrValFromTagList(node, ['img', 'area'], 'alt');
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.text.parse(this.document, node, this.options.textFormat);
 			}
 
-			return(out) ? out : '';
+			return(out != null) ? out : '';
 		},
 
 
@@ -892,49 +891,49 @@ var Microformats; // jshint ignore:line
 		 * @return {String}
 		 */
 		getUValue: function(node, valueParse) {
-			var out = '';
+			var out = null;
 			if(valueParse) {
 				out = this.getValueClass(node, 'u');
 			}
 
-			if(!out && valueParse) {
+			if(out == null && valueParse) {
 				out = this.getValueTitle(node);
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.domUtils.getAttrValFromTagList(node, ['a', 'area'], 'href');
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.domUtils.getAttrValFromTagList(node, ['img','audio','video','source'], 'src');
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.domUtils.getAttrValFromTagList(node, ['video'], 'poster');
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.domUtils.getAttrValFromTagList(node, ['object'], 'data');
 			}
 
 			// if we have no protocol separator, turn relative url to absolute url
-			if(out && out !== '' && out.indexOf('://') === -1) {
+			if(out != null && out.indexOf('://') === -1) {
 				out = modules.url.resolve(out, this.options.baseUrl);
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.domUtils.getAttrValFromTagList(node, ['abbr'], 'title');
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.domUtils.getAttrValFromTagList(node, ['data','input'], 'value');
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.text.parse(this.document, node, this.options.textFormat);
 			}
 
-			return(out) ? out : '';
+			return(out != null) ? out : '';
 		},
 
 
@@ -948,33 +947,33 @@ var Microformats; // jshint ignore:line
 		 * @return {String}
 		 */
 		getDTValue: function(node, className, uf, valueParse) {
-			var out = '',
+			var out = null,
 				fromValue = false;
 
 			if(valueParse) {
 				out = this.getValueClass(node, 'dt');
-				if(out){
+				if(out != null){
 					fromValue = true;
 				}
 			}
 
-			if(!out && valueParse) {
+			if(out == null && valueParse) {
 				out = this.getValueTitle(node);
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.domUtils.getAttrValFromTagList(node, ['time', 'ins', 'del'], 'datetime');
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.domUtils.getAttrValFromTagList(node, ['abbr'], 'title');
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.domUtils.getAttrValFromTagList(node, ['data', 'input'], 'value');
 			}
 
-			if(!out) {
+			if(out == null) {
 				out = modules.text.parse(this.document, node, this.options.textFormat);
 			}
 
@@ -1075,7 +1074,7 @@ var Microformats; // jshint ignore:line
 						value = context.getDTValue(child, '', null, false);
 						break;
 					}
-					if(value) {
+					if(value!=null) {
 						out.push(modules.utils.trim(value));
 					}
 				}
@@ -1120,7 +1119,11 @@ var Microformats; // jshint ignore:line
 				}
 				x++;
 			}
-			return out.join('');
+			if (out.length > 0) {
+				return out.join('');
+			} else {
+				return null;
+			}
 		},
 
 
@@ -1425,11 +1428,13 @@ var Microformats; // jshint ignore:line
 			while (i--) {
 				try{
 					// the url parser can blow up if the format is not right
-					attr = modules.domUtils.getAttribute(nodes[i], attrName);
-					if(attr && attr !== '' && baseUrl !== '' && attr.indexOf('://') === -1) {
-						//attr = urlParser.resolve(baseUrl, attr);
-						attr = modules.url.resolve(attr, baseUrl);
-						modules.domUtils.setAttribute(nodes[i], attrName, attr);
+					if (modules.domUtils.hasAttribute(nodes[i], attrName)) {
+						attr = modules.domUtils.getAttribute(nodes[i], attrName);
+						if(baseUrl !== '' && attr.indexOf('://') === -1) {
+							//attr = urlParser.resolve(baseUrl, attr);
+							attr = modules.url.resolve(attr, baseUrl);
+							modules.domUtils.setAttribute(nodes[i], attrName, attr);
+						}
 					}
 				}catch(err){
 					// do nothing - convert only the urls we can, leave the rest as they are
