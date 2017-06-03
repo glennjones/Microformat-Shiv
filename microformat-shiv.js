@@ -420,6 +420,16 @@ var Microformats; // jshint ignore:line
             }
 
 			if(items){
+
+                // add v1 names
+                y = filters.length;
+                while (y--) {
+                    if(this.getMapping(filters[y])){
+                        var v1Name = this.getMapping(filters[y]).root;
+                        filters.push(v1Name);
+                    }
+                }
+
 				i = items.length;
 				while(x < i) {
 					// append matching nodes into newRootNode
